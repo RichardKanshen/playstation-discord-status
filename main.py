@@ -49,8 +49,10 @@ class PlaystationDiscordStatus:
             presence = user_online_id.get_presence()
 
             if presence != previous_presence:
+                
+                print(presence)
 
-                online_status = presence["primaryPlatformInfo"]["onlineStatus"]
+                online_status = presence["basicPresence"]["primaryPlatformInfo"]["onlineStatus"]
 
                 if online_status == "offline" and online_status != previous_status:
 
@@ -60,21 +62,20 @@ class PlaystationDiscordStatus:
                 else:
 
                     # Display correct system in presence
-                    platform = presence["primaryPlatformInfo"]["platform"]
-                    if platform == "PS5":
-                        self.system = "ps5_main"
-                    elif platform == "PS4":
-                        self.system = "ps4_main"
+                    platform = presence["basicPresence"]["primaryPlatformInfo"]["platform"]
+                    if platform == "ps5":
+                        self.system = "ps5"
+                    elif platform == "ps4":
+                        self.system = "ps4"
                     self.integration.connect_presence(self.CLIENT_APP_ID)
 
-                    if "gameTitleInfoList" not in presence:
-
+                    if "gameTitleInfoList" not in presence["basicPresence"]:
                         # User isn't playing a game
                         self.integration.online_not_ingame()
 
                     else:
 
-                        game_info = presence["gameTitleInfoList"][0]
+                        game_info = presence["basicPresence"]["gameTitleInfoList"][0]
                         self.integration.online_ingame(game_info)
 
                 previous_status = online_status
